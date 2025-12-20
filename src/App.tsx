@@ -54,10 +54,9 @@ function App() {
   };
 
   const handleTimeUp = () => {
-    // Auto-submit empty answer on time up
-    handleAnswerSubmit(
-      quizState.questions[quizState.currentIndex].userAnswer || 0
-    );
+    // Auto-submit with 0 as default answer when time runs out
+    // This moves to next question or ends quiz if it's the last question
+    handleAnswerSubmit(0);
   };
 
   const handleRestart = () => {

@@ -108,7 +108,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
 
         {/* Timer */}
         <div style={{ textAlign: "center", marginBottom: "30px" }}>
-          <Timer duration={180} onTimeUp={onTimeUp} />
+          <Timer key={question.id} duration={120} onTimeUp={onTimeUp} />
         </div>
 
         {/* Question */}
@@ -119,20 +119,25 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         {/* Input */}
         {!showFeedback && (
           <Stack gap={16} styles={{ root: { marginTop: "30px" } }}>
-            <TextField
+            <input
               autoFocus
               type="number"
               value={inputValue}
-              onChange={(_, newValue) => setInputValue(newValue || "")}
+              onChange={(e) => setInputValue(e.target.value || "")}
               onKeyPress={handleKeyPress}
               placeholder="Enter your answer"
-              styles={{
-                root: { maxWidth: "200px", margin: "0 auto" },
-                field: {
-                  fontSize: "24px",
-                  height: "50px",
-                  textAlign: "center",
-                },
+              style={{
+                maxWidth: "250px",
+                width: "100%",
+                margin: "0 auto",
+                display: "block",
+                fontSize: "24px",
+                height: "50px",
+                padding: "8px 12px",
+                textAlign: "center",
+                border: "2px solid #0078d4",
+                borderRadius: "4px",
+                fontFamily: "inherit",
               }}
             />
             <div style={{ textAlign: "center" }}>
