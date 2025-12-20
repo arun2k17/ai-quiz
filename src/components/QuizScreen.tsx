@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  PrimaryButton,
-  Stack,
-  Text,
-  TextField,
-  mergeStyles,
-} from "@fluentui/react";
+import { PrimaryButton, Stack, Text, mergeStyles } from "@fluentui/react";
 import type { Question } from "../types/quiz.ts";
 import { isAnswerCorrect } from "../utils/quiz.ts";
 import { Timer } from "./Timer.tsx";
@@ -16,6 +10,7 @@ interface QuizScreenProps {
   totalQuestions: number;
   onAnswerSubmit: (answer: number) => void;
   onTimeUp: () => void;
+  timerDuration?: number; // in seconds, default 180 (3 minutes)
 }
 
 export const QuizScreen: React.FC<QuizScreenProps> = ({
@@ -24,6 +19,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   totalQuestions,
   onAnswerSubmit,
   onTimeUp,
+  timerDuration = 180, // 3 minutes default
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
@@ -108,7 +104,11 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
 
         {/* Timer */}
         <div style={{ textAlign: "center", marginBottom: "30px" }}>
-          <Timer key={question.id} duration={120} onTimeUp={onTimeUp} />
+          <Timer
+            key={question.id}
+            duration={timerDuration}
+            onTimeUp={onTimeUp}
+          />
         </div>
 
         {/* Question */}

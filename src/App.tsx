@@ -99,6 +99,7 @@ function App() {
         totalQuestions={quizState.questions.length}
         onAnswerSubmit={handleAnswerSubmit}
         onTimeUp={handleTimeUp}
+        timerDuration={180}
       />
     );
   }
