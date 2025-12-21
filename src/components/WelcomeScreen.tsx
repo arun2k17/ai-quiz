@@ -1,8 +1,9 @@
 import React from "react";
 import { PrimaryButton, Stack, Text, mergeStyles } from "@fluentui/react";
+import type { OperationType } from "../types/quiz.ts";
 
 interface WelcomeScreenProps {
-  onStart: () => void;
+  onStart: (operation: OperationType) => void;
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
@@ -39,27 +40,42 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
             variant="xxLarge"
             styles={{ root: { fontSize: "28px", marginBottom: "24px" } }}
           >
-            Ready to test your addition skills?
+            Ready to test your math skills?
           </Text>
           <Text
             variant="large"
             styles={{ root: { fontSize: "20px", opacity: 0.9 } }}
           >
-            10 questions • 2 minutes per question • For ages 8+
+            10 questions • 3 minutes per question • For ages 8+
           </Text>
         </div>
 
-        <PrimaryButton
-          text="Start Quiz"
-          onClick={onStart}
-          styles={{
-            root: {
-              height: "60px",
-              fontSize: "24px",
-              background: "#107c10",
-            },
-          }}
-        />
+        <Stack horizontal tokens={{ childrenGap: 20 }}>
+          <PrimaryButton
+            text="➕ Addition"
+            onClick={() => onStart("addition")}
+            styles={{
+              root: {
+                height: "60px",
+                fontSize: "24px",
+                background: "#107c10",
+                minWidth: "200px",
+              },
+            }}
+          />
+          <PrimaryButton
+            text="➖ Subtraction"
+            onClick={() => onStart("subtraction")}
+            styles={{
+              root: {
+                height: "60px",
+                fontSize: "24px",
+                background: "#8764b8",
+                minWidth: "200px",
+              },
+            }}
+          />
+        </Stack>
 
         <Text
           variant="medium"

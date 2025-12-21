@@ -13,11 +13,11 @@ test.describe('Math Quiz App - Full Flow', () => {
         // ===== WELCOME SCREEN =====
         // Verify welcome screen is displayed using more robust selectors
         // Wait for button to be visible (it's the most reliable element)
-        const startButton = page.locator('button').filter({ hasText: /Start Quiz/i });
-        await expect(startButton).toBeVisible({ timeout: 10000 });
+        const additionButton = page.locator('button').filter({ hasText: /Addition/i });
+        await expect(additionButton).toBeVisible({ timeout: 10000 });
 
-        // Click Start Quiz button
-        await startButton.click();
+        // Click Addition button
+        await additionButton.click();
 
         // ===== QUIZ SCREEN - QUESTION 1 =====
         // Wait for input field to appear (indicates quiz has started)
@@ -109,14 +109,14 @@ test.describe('Math Quiz App - Full Flow', () => {
         await newQuizButton.click();
 
         // ===== VERIFY BACK AT WELCOME SCREEN =====
-        await expect(startButton).toBeVisible({ timeout: 10000 });
+        await expect(additionButton).toBeVisible({ timeout: 10000 });
     });
 
     test('should show wrong answer feedback and move to next question', async ({ page }) => {
         // Start quiz
-        const startButton = page.locator('button').filter({ hasText: /Start Quiz/i });
-        await expect(startButton).toBeVisible({ timeout: 10000 });
-        await startButton.click();
+        const additionButton = page.locator('button').filter({ hasText: /Addition/i });
+        await expect(additionButton).toBeVisible({ timeout: 10000 });
+        await additionButton.click();
 
         // Wait for input field
         const input = page.locator('input[type="number"]');
@@ -154,9 +154,9 @@ test.describe('Math Quiz App - Full Flow', () => {
 
     test('should handle keyboard input (Enter key)', async ({ page }) => {
         // Start quiz
-        const startButton = page.locator('button').filter({ hasText: /Start Quiz/i });
-        await expect(startButton).toBeVisible({ timeout: 10000 });
-        await startButton.click();
+        const additionButton = page.locator('button').filter({ hasText: /Addition/i });
+        await expect(additionButton).toBeVisible({ timeout: 10000 });
+        await additionButton.click();
 
         // Wait for input field
         const input = page.locator('input[type="number"]');
@@ -181,12 +181,55 @@ test.describe('Math Quiz App - Full Flow', () => {
 
     test('should display timer on quiz screen', async ({ page }) => {
         // Start quiz
-        const startButton = page.locator('button').filter({ hasText: /Start Quiz/i });
-        await expect(startButton).toBeVisible({ timeout: 10000 });
-        await startButton.click();
+        const additionButton = page.locator('button').filter({ hasText: /Addition/i });
+        await expect(additionButton).toBeVisible({ timeout: 10000 });
+        await additionButton.click();
 
         // Verify timer is visible (contains clock emoji and time format)
         const timer = page.locator('text=/⏱️/');
         await expect(timer).toBeVisible({ timeout: 10000 });
+    });
+
+    test('should complete subtraction quiz flow', async ({ page }) => {
+        // ===== WELCOME SCREEN =====
+        const subtractionButton = page.locator('button').filter({ hasText: /Subtraction/i });
+        await expect(subtractionButton).toBeVisible({ timeout: 10000 });
+
+        // Click Subtraction button
+        await subtractionButton.click();
+
+        // ===== QUIZ SCREEN - QUESTION 1 =====
+        const input = page.locator('input[type="number"]');
+        await expect(input).toBeVisible({ timeout: 10000 });
+
+        // Get the question text (large centered numbers with -)
+        const questionDiv = page.locator('div').filter({ hasText: /^\d+\s*-\s*\d+\s*=\s*\?$/i }).first();
+        await expect(questionDiv).toBeVisible();
+
+        // Extract the numbers to calculate expected answer
+        const questionContent = await questionDiv.textContent();
+        const [num1Str, num2Str] = questionContent!.match(/\d+/g)!;
+        const num1 = parseInt(num1Str);
+        const num2 = parseInt(num2Str);
+        const expectedAnswer = num1 - num2;
+
+        // Verify num1 >= num2 (positive result)
+        expect(num1).toBeGreaterThanOrEqual(num2);
+
+        // Submit correct answer
+        await input.fill(expectedAnswer.toString());
+        const submitButton = page.locator('button').filter({ hasText: /Submit Answer/i }).first();
+        await submitButton.click();
+
+        // Verify correct feedback
+        const correctFeedback = page.locator('text=/✅|Correct/i');
+        await expect(correctFeedback).toBeVisible({ timeout: 5000 });
+
+        // Wait for auto-advance
+        await page.waitForTimeout(2000);
+
+        // ===== VERIFY QUESTION 2 IS ALSO SUBTRACTION =====
+        const questionDiv2 = page.locator('div').filter({ hasText: /^\d+\s*-\s*\d+\s*=\s*\?$/i }).first();
+        await expect(questionDiv2).toBeVisible();
     });
 });

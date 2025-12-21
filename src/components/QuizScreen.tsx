@@ -41,7 +41,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
       return;
     }
 
-    const isCorrect = isAnswerCorrect(question.num1, question.num2, answer);
+    const isCorrect = isAnswerCorrect(question, answer);
     setFeedback(isCorrect ? "correct" : "wrong");
     setShowFeedback(true);
 
@@ -113,7 +113,8 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
 
         {/* Question */}
         <div className={questionTextStyles}>
-          {question.num1} + {question.num2} = ?
+          {question.num1} {question.operation === "addition" ? "+" : "-"}{" "}
+          {question.num2} = ?
         </div>
 
         {/* Input */}
@@ -161,7 +162,10 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           <div className={feedbackStyles}>
             {feedback === "correct" ? "✅ Correct!" : "❌ Wrong!"}
             <div style={{ fontSize: "18px", color: "#666", marginTop: "10px" }}>
-              The answer is {question.num1 + question.num2}
+              The answer is{" "}
+              {question.operation === "addition"
+                ? question.num1 + question.num2
+                : question.num1 - question.num2}
             </div>
           </div>
         )}

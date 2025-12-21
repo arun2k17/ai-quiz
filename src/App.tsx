@@ -3,7 +3,7 @@ import { initializeIcons } from "@fluentui/react";
 import { WelcomeScreen } from "./components/WelcomeScreen.tsx";
 import { QuizScreen } from "./components/QuizScreen.tsx";
 import { ResultsScreen } from "./components/ResultsScreen.tsx";
-import type { Question, QuizState } from "./types/quiz.ts";
+import type { Question, QuizState, OperationType } from "./types/quiz.ts";
 import { generateQuizQuestions } from "./utils/quiz.ts";
 import "./App.css";
 
@@ -15,14 +15,16 @@ function App() {
     questions: [],
     currentIndex: 0,
     status: "welcome",
+    operationType: null,
   });
 
-  const handleStartQuiz = () => {
-    const newQuestions = generateQuizQuestions();
+  const handleStartQuiz = (operation: OperationType) => {
+    const newQuestions = generateQuizQuestions(operation);
     setQuizState({
       questions: newQuestions,
       currentIndex: 0,
       status: "in-progress",
+      operationType: operation,
     });
   };
 
@@ -31,8 +33,11 @@ function App() {
     const currentQuestion = updatedQuestions[quizState.currentIndex];
 
     currentQuestion.userAnswer = answer;
-    currentQuestion.isCorrect =
-      currentQuestion.num1 + currentQuestion.num2 === answer;
+    const expectedAnswer =
+      currentQuestion.operation === "addition"
+        ? currentQuestion.num1 + currentQuestion.num2
+        : currentQuestion.num1 - currentQuestion.num2;
+    currentQuestion.isCorrect = expectedAnswer === answer;
 
     const nextIndex = quizState.currentIndex + 1;
 
@@ -42,6 +47,7 @@ function App() {
         questions: updatedQuestions,
         currentIndex: nextIndex,
         status: "review",
+        operationType: quizState.operationType,
       });
     } else {
       // Move to next question
@@ -49,6 +55,7 @@ function App() {
         questions: updatedQuestions,
         currentIndex: nextIndex,
         status: "in-progress",
+        operationType: quizState.operationType,
       });
     }
   };
@@ -64,6 +71,7 @@ function App() {
       questions: [],
       currentIndex: 0,
       status: "welcome",
+      operationType: null,
     });
   };
 
@@ -82,6 +90,7 @@ function App() {
       questions: retryQuestions,
       currentIndex: 0,
       status: "in-progress",
+      operationType: quizState.operationType,
     });
   };
 
