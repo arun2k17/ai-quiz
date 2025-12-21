@@ -20,6 +20,9 @@ dist-ssr
 build
 .turbo
 
+# Keep docs folder for GitHub Pages deployment
+# !docs
+
 # Personal journal entries
 feelings.md
 journal.md
