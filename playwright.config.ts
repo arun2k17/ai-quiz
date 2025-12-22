@@ -11,7 +11,8 @@ export default defineConfig({
     use: {
         baseURL: 'http://localhost:5173',
         trace: 'on-first-retry',
-        screenshot: 'only-on-failure',
+        screenshot: 'on', // Capture screenshots at every step
+        video: 'retain-on-failure', // Record video when tests fail
     },
 
     projects: [
@@ -20,4 +21,11 @@ export default defineConfig({
             use: { ...devices['Desktop Chrome'] },
         },
     ],
+
+    webServer: {
+        command: 'npm run dev',
+        url: 'http://localhost:5173',
+        reuseExistingServer: !process.env.CI,
+        timeout: 120000,
+    },
 });

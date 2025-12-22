@@ -1,4 +1,4 @@
-export type OperationType = 'addition' | 'subtraction';
+export type OperationType = 'addition' | 'subtraction' | 'multiplication';
 
 export interface Question {
     id: number;

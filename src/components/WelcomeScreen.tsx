@@ -75,6 +75,18 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
               },
             }}
           />
+          <PrimaryButton
+            text="✖️ Multiplication"
+            onClick={() => onStart("multiplication")}
+            styles={{
+              root: {
+                height: "60px",
+                fontSize: "24px",
+                background: "#d83b01",
+                minWidth: "200px",
+              },
+            }}
+          />
         </Stack>
 
         <Text

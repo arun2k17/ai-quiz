@@ -4,7 +4,7 @@ import { WelcomeScreen } from "./components/WelcomeScreen.tsx";
 import { QuizScreen } from "./components/QuizScreen.tsx";
 import { ResultsScreen } from "./components/ResultsScreen.tsx";
 import type { Question, QuizState, OperationType } from "./types/quiz.ts";
-import { generateQuizQuestions } from "./utils/quiz.ts";
+import { generateQuizQuestions, isAnswerCorrect } from "./utils/quiz.ts";
 import "./App.css";
 
 // Initialize Fluent UI icons
@@ -33,11 +33,7 @@ function App() {
     const currentQuestion = updatedQuestions[quizState.currentIndex];
 
     currentQuestion.userAnswer = answer;
-    const expectedAnswer =
-      currentQuestion.operation === "addition"
-        ? currentQuestion.num1 + currentQuestion.num2
-        : currentQuestion.num1 - currentQuestion.num2;
-    currentQuestion.isCorrect = expectedAnswer === answer;
+    currentQuestion.isCorrect = isAnswerCorrect(currentQuestion, answer);
 
     const nextIndex = quizState.currentIndex + 1;
 

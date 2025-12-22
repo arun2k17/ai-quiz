@@ -8,18 +8,28 @@ export const getRandomNumber = (min: number, max: number): number => {
 };
 
 /**
- * Generate 10 quiz questions with 2-3 digit numbers
+ * Generate 10 quiz questions based on operation type
  */
 export const generateQuizQuestions = (operation: OperationType): Question[] => {
     const questions: Question[] = [];
 
     for (let i = 0; i < 10; i++) {
-        let num1 = getRandomNumber(10, 999);
-        let num2 = getRandomNumber(10, 999);
+        let num1: number;
+        let num2: number;
 
-        // For subtraction, ensure num1 > num2 so result is positive
-        if (operation === 'subtraction' && num1 < num2) {
-            [num1, num2] = [num2, num1];
+        if (operation === 'multiplication') {
+            // Single-digit multiplication (1-9)
+            num1 = getRandomNumber(1, 9);
+            num2 = getRandomNumber(1, 9);
+        } else {
+            // 2-3 digit numbers for addition and subtraction
+            num1 = getRandomNumber(10, 999);
+            num2 = getRandomNumber(10, 999);
+
+            // For subtraction, ensure num1 > num2 so result is positive
+            if (operation === 'subtraction' && num1 < num2) {
+                [num1, num2] = [num2, num1];
+            }
         }
 
         questions.push({
@@ -39,9 +49,17 @@ export const generateQuizQuestions = (operation: OperationType): Question[] => {
  * Check if the user's answer is correct
  */
 export const isAnswerCorrect = (question: Question, userAnswer: number): boolean => {
-    const expectedAnswer = question.operation === 'addition'
-        ? question.num1 + question.num2
-        : question.num1 - question.num2;
+    let expectedAnswer: number;
+
+    if (question.operation === 'addition') {
+        expectedAnswer = question.num1 + question.num2;
+    } else if (question.operation === 'subtraction') {
+        expectedAnswer = question.num1 - question.num2;
+    } else {
+        // multiplication
+        expectedAnswer = question.num1 * question.num2;
+    }
+
     return expectedAnswer === userAnswer;
 };
 

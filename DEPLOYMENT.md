@@ -56,16 +56,19 @@ GitHub will automatically redeploy within 1-3 minutes.
 **Important**: Tests require a running dev server.
 
 In one terminal:
+
 ```bash
 npm run dev
 ```
 
 In another terminal:
+
 ```bash
 npm test
 ```
 
 Or test the production build:
+
 ```bash
 npm run preview    # Serves the /docs folder locally
 npm test          # Run tests (in another terminal)
@@ -84,6 +87,7 @@ npm test          # Run tests (in another terminal)
 **Problem**: App shows blank page or 404 errors
 
 **Solution**: Make sure the `base` in `vite.config.ts` matches your repo name:
+
 ```ts
 base: '/ai-quiz/',  // Must match your GitHub repo name
 ```
@@ -91,6 +95,7 @@ base: '/ai-quiz/',  // Must match your GitHub repo name
 **Problem**: CSS/JS files not loading
 
 **Solution**: Rebuild and recommit the `/docs` folder:
+
 ```bash
 npm run build
 git add docs/

@@ -113,7 +113,12 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
 
         {/* Question */}
         <div className={questionTextStyles}>
-          {question.num1} {question.operation === "addition" ? "+" : "-"}{" "}
+          {question.num1}{" "}
+          {question.operation === "addition"
+            ? "+"
+            : question.operation === "subtraction"
+            ? "-"
+            : "×"}{" "}
           {question.num2} = ?
         </div>
 
@@ -165,7 +170,9 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
               The answer is{" "}
               {question.operation === "addition"
                 ? question.num1 + question.num2
-                : question.num1 - question.num2}
+                : question.operation === "subtraction"
+                ? question.num1 - question.num2
+                : question.num1 * question.num2}
             </div>
           </div>
         )}

@@ -198,38 +198,118 @@ test.describe('Math Quiz App - Full Flow', () => {
         // Click Subtraction button
         await subtractionButton.click();
 
-        // ===== QUIZ SCREEN - QUESTION 1 =====
+        // ===== QUIZ SCREEN - ANSWER ALL 10 QUESTIONS =====
         const input = page.locator('input[type="number"]');
         await expect(input).toBeVisible({ timeout: 10000 });
 
-        // Get the question text (large centered numbers with -)
-        const questionDiv = page.locator('div').filter({ hasText: /^\d+\s*-\s*\d+\s*=\s*\?$/i }).first();
-        await expect(questionDiv).toBeVisible();
-
-        // Extract the numbers to calculate expected answer
-        const questionContent = await questionDiv.textContent();
-        const [num1Str, num2Str] = questionContent!.match(/\d+/g)!;
-        const num1 = parseInt(num1Str);
-        const num2 = parseInt(num2Str);
-        const expectedAnswer = num1 - num2;
-
-        // Verify num1 >= num2 (positive result)
-        expect(num1).toBeGreaterThanOrEqual(num2);
-
-        // Submit correct answer
-        await input.fill(expectedAnswer.toString());
         const submitButton = page.locator('button').filter({ hasText: /Submit Answer/i }).first();
-        await submitButton.click();
-
-        // Verify correct feedback
         const correctFeedback = page.locator('text=/✅|Correct/i');
-        await expect(correctFeedback).toBeVisible({ timeout: 5000 });
 
-        // Wait for auto-advance
+        // Answer all 10 subtraction questions
+        for (let i = 1; i <= 10; i++) {
+            // Get the question text (large centered numbers with -)
+            const questionDiv = page.locator('div').filter({ hasText: /^\d+\s*-\s*\d+\s*=\s*\?$/i }).first();
+            await expect(questionDiv).toBeVisible();
+
+            // Extract the numbers to calculate expected answer
+            const questionContent = await questionDiv.textContent();
+            const [num1Str, num2Str] = questionContent!.match(/\d+/g)!;
+            const num1 = parseInt(num1Str);
+            const num2 = parseInt(num2Str);
+            const expectedAnswer = num1 - num2;
+
+            // Verify num1 >= num2 (positive result)
+            expect(num1).toBeGreaterThanOrEqual(num2);
+
+            // Submit correct answer
+            await input.fill(expectedAnswer.toString());
+            await submitButton.click();
+
+            // Verify correct feedback
+            await expect(correctFeedback).toBeVisible({ timeout: 5000 });
+
+            // Wait for auto-advance (not needed on last question)
+            if (i < 10) {
+                await page.waitForTimeout(2000);
+            }
+        }
+
+        // ===== RESULTS SCREEN =====
         await page.waitForTimeout(2000);
 
-        // ===== VERIFY QUESTION 2 IS ALSO SUBTRACTION =====
-        const questionDiv2 = page.locator('div').filter({ hasText: /^\d+\s*-\s*\d+\s*=\s*\?$/i }).first();
-        await expect(questionDiv2).toBeVisible();
+        // Verify results screen is displayed
+        const resultsHeading = page.locator('text=/Quiz Complete|Complete/i');
+        await expect(resultsHeading).toBeVisible({ timeout: 10000 });
+
+        // Verify perfect score
+        const scoreText = page.locator('div').filter({ hasText: /10\s*\/\s*10/ }).first();
+        await expect(scoreText).toBeVisible();
+
+        // Verify button to start new quiz exists
+        const newQuizButton = page.locator('button').filter({ hasText: /Start New Quiz/i });
+        await expect(newQuizButton).toBeVisible();
+    });
+
+    test('should complete multiplication quiz flow', async ({ page }) => {
+        // ===== WELCOME SCREEN =====
+        const multiplicationButton = page.locator('button').filter({ hasText: /Multiplication/i });
+        await expect(multiplicationButton).toBeVisible({ timeout: 10000 });
+
+        // Click Multiplication button
+        await multiplicationButton.click();
+
+        // ===== QUIZ SCREEN - ANSWER ALL 10 QUESTIONS =====
+        const input = page.locator('input[type="number"]');
+        await expect(input).toBeVisible({ timeout: 10000 });
+
+        const submitButton = page.locator('button').filter({ hasText: /Submit Answer/i }).first();
+        const correctFeedback = page.locator('text=/✅|Correct/i');
+
+        // Answer all 10 multiplication questions
+        for (let i = 1; i <= 10; i++) {
+            // Get the question text (large centered numbers with ×)
+            const questionDiv = page.locator('div').filter({ hasText: /^\d+\s*×\s*\d+\s*=\s*\?$/i }).first();
+            await expect(questionDiv).toBeVisible();
+
+            // Extract the numbers to calculate expected answer
+            const questionContent = await questionDiv.textContent();
+            const [num1Str, num2Str] = questionContent!.match(/\d+/g)!;
+            const num1 = parseInt(num1Str);
+            const num2 = parseInt(num2Str);
+            const expectedAnswer = num1 * num2;
+
+            // Verify single-digit numbers (1-9)
+            expect(num1).toBeGreaterThanOrEqual(1);
+            expect(num1).toBeLessThanOrEqual(9);
+            expect(num2).toBeGreaterThanOrEqual(1);
+            expect(num2).toBeLessThanOrEqual(9);
+
+            // Submit correct answer
+            await input.fill(expectedAnswer.toString());
+            await submitButton.click();
+
+            // Verify correct feedback
+            await expect(correctFeedback).toBeVisible({ timeout: 5000 });
+
+            // Wait for auto-advance (not needed on last question)
+            if (i < 10) {
+                await page.waitForTimeout(2000);
+            }
+        }
+
+        // ===== RESULTS SCREEN =====
+        await page.waitForTimeout(2000);
+
+        // Verify results screen is displayed
+        const resultsHeading = page.locator('text=/Quiz Complete|Complete/i');
+        await expect(resultsHeading).toBeVisible({ timeout: 10000 });
+
+        // Verify perfect score
+        const scoreText = page.locator('div').filter({ hasText: /10\s*\/\s*10/ }).first();
+        await expect(scoreText).toBeVisible();
+
+        // Verify button to start new quiz exists
+        const newQuizButton = page.locator('button').filter({ hasText: /Start New Quiz/i });
+        await expect(newQuizButton).toBeVisible();
     });
 });
