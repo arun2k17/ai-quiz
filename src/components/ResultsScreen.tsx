@@ -136,21 +136,11 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
                 <Text
                   styles={{ root: { fontWeight: "bold", marginBottom: "8px" } }}
                 >
-                  Question {q.id}: {q.num1}{" "}
-                  {q.operation === "addition"
-                    ? "+"
-                    : q.operation === "subtraction"
-                    ? "-"
-                    : "×"}{" "}
-                  {q.num2}
+                  Question {q.id}: {q.question}
                 </Text>
                 <Text styles={{ root: { color: "#666", fontSize: "14px" } }}>
                   Your answer: {q.userAnswer || "—"} | Correct answer:{" "}
-                  {q.operation === "addition"
-                    ? q.num1 + q.num2
-                    : q.operation === "subtraction"
-                    ? q.num1 - q.num2
-                    : q.num1 * q.num2}
+                  {q.answer}
                 </Text>
               </div>
             ))}
@@ -183,21 +173,10 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
               <Text
                 styles={{ root: { fontWeight: "bold", marginBottom: "8px" } }}
               >
-                {q.isCorrect ? "✅" : "❌"} Question {q.id}: {q.num1}{" "}
-                {q.operation === "addition"
-                  ? "+"
-                  : q.operation === "subtraction"
-                  ? "-"
-                  : "×"}{" "}
-                {q.num2}
+                {q.isCorrect ? "✅" : "❌"} Question {q.id}: {q.question}
               </Text>
               <Text styles={{ root: { color: "#666", fontSize: "14px" } }}>
-                Your answer: {q.userAnswer || "—"} | Correct:{" "}
-                {q.operation === "addition"
-                  ? q.num1 + q.num2
-                  : q.operation === "subtraction"
-                  ? q.num1 - q.num2
-                  : q.num1 * q.num2}
+                Your answer: {q.userAnswer || "—"} | Correct: {q.answer}
               </Text>
             </div>
           ))}

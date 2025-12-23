@@ -1,4 +1,5 @@
-import type { Question, OperationType } from '../types/quiz.ts';
+import type { Question, OperationType, QuizMode } from '../types/quiz.ts';
+import { storyProblems } from '../data/story-problems.ts';
 
 /**
  * Generate a random number between min and max (inclusive)
@@ -8,9 +9,39 @@ export const getRandomNumber = (min: number, max: number): number => {
 };
 
 /**
- * Generate 10 quiz questions based on operation type
+ * Get operation symbol for display
  */
-export const generateQuizQuestions = (operation: OperationType): Question[] => {
+const getOperationSymbol = (operation: OperationType): string => {
+    switch (operation) {
+        case 'addition': return '+';
+        case 'subtraction': return '-';
+        case 'multiplication': return '×';
+    }
+};
+
+/**
+ * Calculate answer for computational problems
+ */
+const calculateAnswer = (num1: number, num2: number, operation: OperationType): number => {
+    switch (operation) {
+        case 'addition': return num1 + num2;
+        case 'subtraction': return num1 - num2;
+        case 'multiplication': return num1 * num2;
+    }
+};
+
+/**
+ * Generate 10 quiz questions based on mode
+ */
+export const generateQuizQuestions = (mode: QuizMode): Question[] => {
+    // Story problems mode - randomly select 10 from the problem bank
+    if (mode === 'story-problems') {
+        const shuffled = [...storyProblems].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, 10);
+    }
+
+    // Computational mode - generate questions with operation
+    const operation = mode as OperationType;
     const questions: Question[] = [];
 
     for (let i = 0; i < 10; i++) {
@@ -32,13 +63,13 @@ export const generateQuizQuestions = (operation: OperationType): Question[] => {
             }
         }
 
+        const symbol = getOperationSymbol(operation);
+        const answer = calculateAnswer(num1, num2, operation);
+
         questions.push({
             id: i + 1,
-            num1,
-            num2,
-            operation,
-            userAnswer: null,
-            isCorrect: null,
+            question: `${num1} ${symbol} ${num2} = ?`,
+            answer,
         });
     }
 
@@ -49,18 +80,7 @@ export const generateQuizQuestions = (operation: OperationType): Question[] => {
  * Check if the user's answer is correct
  */
 export const isAnswerCorrect = (question: Question, userAnswer: number): boolean => {
-    let expectedAnswer: number;
-
-    if (question.operation === 'addition') {
-        expectedAnswer = question.num1 + question.num2;
-    } else if (question.operation === 'subtraction') {
-        expectedAnswer = question.num1 - question.num2;
-    } else {
-        // multiplication
-        expectedAnswer = question.num1 * question.num2;
-    }
-
-    return expectedAnswer === userAnswer;
+    return question.answer === userAnswer;
 };
 
 /**

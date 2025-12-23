@@ -1,9 +1,9 @@
 import React from "react";
 import { PrimaryButton, Stack, Text, mergeStyles } from "@fluentui/react";
-import type { OperationType } from "../types/quiz.ts";
+import type { QuizMode } from "../types/quiz.ts";
 
 interface WelcomeScreenProps {
-  onStart: (operation: OperationType) => void;
+  onStart: (mode: QuizMode) => void;
 }
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
@@ -46,54 +46,73 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
             variant="large"
             styles={{ root: { fontSize: "20px", opacity: 0.9 } }}
           >
-            10 questions • 3 minutes per question • For ages 8+
+            Choose your quiz type
           </Text>
         </div>
 
-        <Stack horizontal tokens={{ childrenGap: 20 }}>
-          <PrimaryButton
-            text="➕ Addition"
-            onClick={() => onStart("addition")}
-            styles={{
-              root: {
-                height: "60px",
-                fontSize: "24px",
-                background: "#107c10",
-                minWidth: "200px",
-              },
-            }}
-          />
-          <PrimaryButton
-            text="➖ Subtraction"
-            onClick={() => onStart("subtraction")}
-            styles={{
-              root: {
-                height: "60px",
-                fontSize: "24px",
-                background: "#8764b8",
-                minWidth: "200px",
-              },
-            }}
-          />
-          <PrimaryButton
-            text="✖️ Multiplication"
-            onClick={() => onStart("multiplication")}
-            styles={{
-              root: {
-                height: "60px",
-                fontSize: "24px",
-                background: "#d83b01",
-                minWidth: "200px",
-              },
-            }}
-          />
+        <Stack
+          tokens={{ childrenGap: 16 }}
+          styles={{ root: { maxWidth: "500px", margin: "0 auto" } }}
+        >
+          <Stack horizontal tokens={{ childrenGap: 16 }}>
+            <PrimaryButton
+              text="➕ Addition"
+              onClick={() => onStart("addition")}
+              styles={{
+                root: {
+                  height: "70px",
+                  fontSize: "20px",
+                  background: "#107c10",
+                  flex: 1,
+                },
+              }}
+            />
+            <PrimaryButton
+              text="➖ Subtraction"
+              onClick={() => onStart("subtraction")}
+              styles={{
+                root: {
+                  height: "70px",
+                  fontSize: "20px",
+                  background: "#8764b8",
+                  flex: 1,
+                },
+              }}
+            />
+          </Stack>
+          <Stack horizontal tokens={{ childrenGap: 16 }}>
+            <PrimaryButton
+              text="✖️ Multiplication"
+              onClick={() => onStart("multiplication")}
+              styles={{
+                root: {
+                  height: "70px",
+                  fontSize: "20px",
+                  background: "#d83b01",
+                  flex: 1,
+                },
+              }}
+            />
+            <PrimaryButton
+              text="📖 Story Problems"
+              onClick={() => onStart("story-problems")}
+              styles={{
+                root: {
+                  height: "70px",
+                  fontSize: "20px",
+                  background: "#0078d4",
+                  flex: 1,
+                },
+              }}
+            />
+          </Stack>
         </Stack>
 
         <Text
           variant="medium"
           styles={{ root: { opacity: 0.8, fontSize: "16px" } }}
         >
-          Good luck! 🎯
+          Story Problems: 5 minutes per question • Real-world scenarios 🎯
         </Text>
       </Stack>
     </div>

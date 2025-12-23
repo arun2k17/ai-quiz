@@ -24,12 +24,14 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const [inputValue, setInputValue] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   // Reset feedback when question changes
   useEffect(() => {
     setInputValue("");
     setFeedback(null);
     setShowFeedback(false);
+    setShowHint(false);
   }, [question.id]);
 
   const handleSubmit = () => {
@@ -76,11 +78,13 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   });
 
   const questionTextStyles = mergeStyles({
-    fontSize: "64px",
+    fontSize: question.hint ? "20px" : "64px", // Smaller font for story problems
     fontWeight: "bold",
     color: "#333",
     margin: "20px 0",
-    textAlign: "center",
+    textAlign: question.hint ? "left" : "center", // Left-align story problems
+    lineHeight: question.hint ? "1.6" : "1.2",
+    whiteSpace: question.hint ? "pre-wrap" : "normal", // Allow line breaks
   });
 
   const feedbackStyles = mergeStyles({
@@ -112,15 +116,40 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
         </div>
 
         {/* Question */}
-        <div className={questionTextStyles}>
-          {question.num1}{" "}
-          {question.operation === "addition"
-            ? "+"
-            : question.operation === "subtraction"
-            ? "-"
-            : "×"}{" "}
-          {question.num2} = ?
-        </div>
+        <div className={questionTextStyles}>{question.question}</div>
+
+        {/* Hint button (only for story problems) */}
+        {question.hint && !showFeedback && (
+          <div style={{ textAlign: "center", marginBottom: "20px" }}>
+            <PrimaryButton
+              text={showHint ? "Hide Hint" : "Show Hint 💡"}
+              onClick={() => setShowHint(!showHint)}
+              styles={{
+                root: {
+                  height: "40px",
+                  fontSize: "14px",
+                  background: "#faa",
+                },
+              }}
+            />
+            {showHint && (
+              <div
+                style={{
+                  marginTop: "15px",
+                  padding: "15px",
+                  background: "#fff4e5",
+                  borderRadius: "8px",
+                  border: "2px solid #ffc107",
+                  fontSize: "16px",
+                  color: "#333",
+                  textAlign: "left",
+                }}
+              >
+                <strong>💡 Hint:</strong> {question.hint}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Input */}
         {!showFeedback && (
@@ -167,12 +196,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
           <div className={feedbackStyles}>
             {feedback === "correct" ? "✅ Correct!" : "❌ Wrong!"}
             <div style={{ fontSize: "18px", color: "#666", marginTop: "10px" }}>
-              The answer is{" "}
-              {question.operation === "addition"
-                ? question.num1 + question.num2
-                : question.operation === "subtraction"
-                ? question.num1 - question.num2
-                : question.num1 * question.num2}
+              The answer is {question.answer}
             </div>
           </div>
         )}

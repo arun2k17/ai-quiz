@@ -3,7 +3,7 @@ import { initializeIcons } from "@fluentui/react";
 import { WelcomeScreen } from "./components/WelcomeScreen.tsx";
 import { QuizScreen } from "./components/QuizScreen.tsx";
 import { ResultsScreen } from "./components/ResultsScreen.tsx";
-import type { Question, QuizState, OperationType } from "./types/quiz.ts";
+import type { Question, QuizState, QuizMode } from "./types/quiz.ts";
 import { generateQuizQuestions, isAnswerCorrect } from "./utils/quiz.ts";
 import "./App.css";
 
@@ -12,19 +12,19 @@ initializeIcons();
 
 function App() {
   const [quizState, setQuizState] = useState<QuizState>({
+    mode: "addition",
     questions: [],
     currentIndex: 0,
     status: "welcome",
-    operationType: null,
   });
 
-  const handleStartQuiz = (operation: OperationType) => {
-    const newQuestions = generateQuizQuestions(operation);
+  const handleStartQuiz = (mode: QuizMode) => {
+    const newQuestions = generateQuizQuestions(mode);
     setQuizState({
+      mode,
       questions: newQuestions,
       currentIndex: 0,
       status: "in-progress",
-      operationType: operation,
     });
   };
 
@@ -40,18 +40,18 @@ function App() {
     if (nextIndex >= updatedQuestions.length) {
       // Quiz completed
       setQuizState({
+        mode: quizState.mode,
         questions: updatedQuestions,
         currentIndex: nextIndex,
         status: "review",
-        operationType: quizState.operationType,
       });
     } else {
       // Move to next question
       setQuizState({
+        mode: quizState.mode,
         questions: updatedQuestions,
         currentIndex: nextIndex,
         status: "in-progress",
-        operationType: quizState.operationType,
       });
     }
   };
@@ -64,10 +64,10 @@ function App() {
 
   const handleRestart = () => {
     setQuizState({
+      mode: "addition",
       questions: [],
       currentIndex: 0,
       status: "welcome",
-      operationType: null,
     });
   };
 
@@ -78,15 +78,15 @@ function App() {
     const retryQuestions: Question[] = wrongQuestions.map((q, idx) => ({
       ...q,
       id: idx + 1,
-      userAnswer: null,
-      isCorrect: null,
+      userAnswer: undefined,
+      isCorrect: undefined,
     }));
 
     setQuizState({
+      mode: quizState.mode,
       questions: retryQuestions,
       currentIndex: 0,
       status: "in-progress",
-      operationType: quizState.operationType,
     });
   };
 
@@ -97,6 +97,9 @@ function App() {
 
   if (quizState.status === "in-progress" && quizState.questions.length > 0) {
     const currentQuestion = quizState.questions[quizState.currentIndex];
+    // Story problems get 5 minutes (300s), computational gets 3 minutes (180s)
+    const timerDuration = quizState.mode === "story-problems" ? 300 : 180;
+
     return (
       <QuizScreen
         question={currentQuestion}
@@ -104,7 +107,7 @@ function App() {
         totalQuestions={quizState.questions.length}
         onAnswerSubmit={handleAnswerSubmit}
         onTimeUp={handleTimeUp}
-        timerDuration={180}
+        timerDuration={timerDuration}
       />
     );
   }

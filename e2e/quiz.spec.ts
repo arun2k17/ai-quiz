@@ -312,4 +312,88 @@ test.describe('Math Quiz App - Full Flow', () => {
         const newQuizButton = page.locator('button').filter({ hasText: /Start New Quiz/i });
         await expect(newQuizButton).toBeVisible();
     });
+
+    test('should complete story problems quiz flow', async ({ page }) => {
+        // ===== WELCOME SCREEN =====
+        const storyButton = page.locator('button').filter({ hasText: /Story Problems/i });
+        await expect(storyButton).toBeVisible({ timeout: 10000 });
+
+        // Click Story Problems button
+        await storyButton.click();
+
+        // ===== QUIZ SCREEN - ANSWER ALL 10 STORY PROBLEMS =====
+        const input = page.locator('input[type="number"]');
+        await expect(input).toBeVisible({ timeout: 10000 });
+
+        const submitButton = page.locator('button').filter({ hasText: /Submit Answer/i }).first();
+        const correctFeedback = page.locator('text=/✅|Correct/i');
+
+        // Answer all 10 story problems
+        for (let i = 1; i <= 10; i++) {
+            // Verify hint button exists (story problems have hints)
+            const hintButton = page.locator('button').filter({ hasText: /Show Hint|Hide Hint/i });
+            await expect(hintButton).toBeVisible();
+
+            // For testing, we'll use the hint to get the answer
+            // Click show hint if not already showing
+            const hintText = await hintButton.textContent();
+            if (hintText?.includes('Show')) {
+                await hintButton.click();
+                await page.waitForTimeout(500);
+            }
+
+            // Get the hint text which contains the answer pattern
+            const hintDiv = page.locator('div').filter({ hasText: /💡 Hint:/i }).last();
+            await expect(hintDiv).toBeVisible();
+            const hintContent = await hintDiv.textContent();
+
+            // Extract answer from hint (format: "23 + 15 = ?" or similar)
+            const mathMatch = hintContent!.match(/(\d+)\s*([+\-×])\s*(\d+)\s*=\s*\?/);
+            let answer: number;
+
+            if (mathMatch) {
+                const [, num1Str, op, num2Str] = mathMatch;
+                const num1 = parseInt(num1Str);
+                const num2 = parseInt(num2Str);
+
+                if (op === '+') {
+                    answer = num1 + num2;
+                } else if (op === '-') {
+                    answer = num1 - num2;
+                } else {
+                    answer = num1 * num2;
+                }
+            } else {
+                // Fallback: try to extract just the calculation result if pattern doesn't match
+                throw new Error(`Could not extract answer from hint: ${hintContent}`);
+            }
+
+            // Submit answer
+            await input.fill(answer.toString());
+            await submitButton.click();
+
+            // Verify correct feedback
+            await expect(correctFeedback).toBeVisible({ timeout: 5000 });
+
+            // Wait for auto-advance (not needed on last question)
+            if (i < 10) {
+                await page.waitForTimeout(2000);
+            }
+        }
+
+        // ===== RESULTS SCREEN =====
+        await page.waitForTimeout(2000);
+
+        // Verify results screen is displayed
+        const resultsHeading = page.locator('text=/Quiz Complete|Complete/i');
+        await expect(resultsHeading).toBeVisible({ timeout: 10000 });
+
+        // Verify perfect score
+        const scoreText = page.locator('div').filter({ hasText: /10\s*\/\s*10/ }).first();
+        await expect(scoreText).toBeVisible();
+
+        // Verify button to start new quiz exists
+        const newQuizButton = page.locator('button').filter({ hasText: /Start New Quiz/i });
+        await expect(newQuizButton).toBeVisible();
+    });
 });
